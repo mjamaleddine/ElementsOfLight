@@ -12,6 +12,7 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.senshu.eol.entities.Player;
 import com.senshu.eol.input.GamepadInput;
+import com.senshu.eol.input.KeyboardInput;
 
 public class Play implements Screen {
 
@@ -50,7 +51,6 @@ public class Play implements Screen {
 		map = new TmxMapLoader().load("maps/map.tmx");
 		renderer = new OrthogonalTiledMapRenderer(map);
 		camera = new OrthographicCamera();
-		
 		playerAtlas = new TextureAtlas("img/player.pack");
 		
 		Animation still, left, right, up, down;
@@ -68,8 +68,9 @@ public class Play implements Screen {
 		
 		player = new Player(still, left, right, up , down, (TiledMapTileLayer) map.getLayers().get(0));
 		player.setPosition(35 * player.getCollisionLayer().getTileWidth(), 26 * player.getCollisionLayer().getTileHeight());
-		//Gdx.input.setInputProcessor(new KeyboardInput(player));
-		Gdx.input.setInputProcessor(new GamepadInput(player));
+
+		Gdx.input.setInputProcessor(new KeyboardInput(player));
+		//Gdx.input.setInputProcessor(new GamepadInput(player));
 		
 	}
 

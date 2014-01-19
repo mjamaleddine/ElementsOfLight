@@ -18,6 +18,8 @@ public class Player extends Sprite {
 	private Animation still, left, right, up , down;
 	private TiledMapTileLayer collisionLayer;
 	
+	private float _x = getX(), _y = getY(), pwidth = getWidth(), pheight = getHeight();
+	
 	private String blockedKey = "blocked";
 	
 	public Player(Animation still, Animation left, Animation right,
@@ -44,7 +46,8 @@ public class Player extends Sprite {
 		
 		//move on x
 		setX(getX() + velocity.x * delta);
-				
+		
+		_x = getX() + 8; _y = getY(); pwidth = 16; pheight = 16;
 		if(velocity.x < 0) // going left
 			collisionX = collidesLeft();
 		else if(velocity.x > 0) // going right
@@ -56,20 +59,25 @@ public class Player extends Sprite {
 			velocity.x = 0;
 		}
 		
+		
 		//move on y
 		setY(getY() + velocity.y * delta);
-				
-		if(velocity.y < 0) // going down
+	
+		if(velocity.y < 0){ // going down
+			_y = getY();
 			collisionY = collidesBottom();
-		else if(velocity.y > 0) // going up
+			}
+		else if(velocity.y > 0){ // going up
+			_y = getY() + 12;
 			collisionY = collidesTop();
+			}
 		
 		//react to y collision
 		if(collisionY){
 			setY(oldY);
 			velocity.y = 0;
 		}
-		
+
 		// update animation
 		animationTime += delta;
 		setRegion(velocity.x < 0 ? left.getKeyFrame(animationTime) : velocity.x > 0 ? right.getKeyFrame(animationTime) : velocity.y > 0 ? up.getKeyFrame(animationTime) : velocity.y < 0 ? down.getKeyFrame(animationTime) : still.getKeyFrame(animationTime));
@@ -81,7 +89,7 @@ public class Player extends Sprite {
 		Cell cell = collisionLayer.getCell((int) (x / collisionLayer.getTileWidth()), (int) (y / collisionLayer.getTileHeight()));
 		return cell != null && cell.getTile() != null && cell.getTile().getProperties().containsKey(blockedKey);
 	}
-
+/*
 	public boolean collidesRight() {
 		for(float step = 0; step < getHeight(); step += collisionLayer.getTileHeight() / 2)
 			if(isCellBlocked(getX() + getWidth() , getY() + step))
@@ -107,6 +115,38 @@ public class Player extends Sprite {
 		for(float step = 0; step < getWidth(); step += collisionLayer.getTileWidth() / 2)
 			if(isCellBlocked(getX() + step, getY()))
 				return true;
+		return false;
+	}*/
+	
+	public boolean collidesRight() {
+		for(float step = 0; step < pheight; step += collisionLayer.getTileHeight() / 2)
+			if(isCellBlocked(_x + pwidth , _y + step)){
+				System.out.println("Rechts Collision");
+				return true;}	
+		return false;
+	}
+
+	public boolean collidesLeft() {
+		for(float step = 0; step < pheight; step += collisionLayer.getTileHeight() / 2)
+			if(isCellBlocked(_x, _y + step)){
+				System.out.println("Links Collision");
+				return true;}
+		return false;
+	}
+
+	public boolean collidesTop() {
+		for(float step = 0; step < pwidth; step += collisionLayer.getTileWidth() / 2)
+			if(isCellBlocked(_x + step, _y + pheight)){
+				System.out.println("Oben Collision");
+				return true;}
+		return false;
+	}
+
+	public boolean collidesBottom() {
+		for(float step = 0; step < pwidth; step += collisionLayer.getTileWidth() / 2)
+			if(isCellBlocked(_x + step, _y)){
+				System.out.println("Unten Collision");
+				return true;}
 		return false;
 	}
 	
