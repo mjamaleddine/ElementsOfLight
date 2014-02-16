@@ -1,11 +1,14 @@
 package com.senshu.eol.entities;
 
+import java.util.ArrayList;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 public class Player extends Sprite {
@@ -13,24 +16,44 @@ public class Player extends Sprite {
 	/** the movement velocity */
 	private Vector2 velocity = new Vector2();
 	
-	private float speed = 60 * 2, gravity = 6 * 1.8f, animationTime = 0;
+	private float speed = 60 * 2, gravity = 6 * 1.8f, animationTime = 0, oldTime, cdTime = 500000000;
 	
-	private Animation still, left, right, up , down;
+	private Animation left, right, up , down;
 	private TiledMapTileLayer collisionLayer;
 	
 	private float _x = getX(), _y = getY(), pwidth = getWidth(), pheight = getHeight();
 	
 	private String blockedKey = "blocked";
 	
+	private int health = 6;
+
+	private Sword sword;
+
+	private int direction = 2;
+
+	private Rectangle r1, r2;
+	
+	ArrayList<TreeMonster> treeMonArray;
+	ArrayList<SlimeMonster> slimeMonArray;
+	ArrayList<FireMonster> fireMonArray;
+
+	
 	public Player(Animation still, Animation left, Animation right,
-			Animation up, Animation down, TiledMapTileLayer collisionLayer){
+			Animation up, Animation down, TiledMapTileLayer collisionLayer, Sword sword, 
+				ArrayList<TreeMonster> treeMonArray, ArrayList<SlimeMonster> slimeMonArray, ArrayList<FireMonster> fireMonArray){
 		super(still.getKeyFrame(0));
-		this.still = still;
 		this.left = left;
 		this.right = right;
 		this.up = up;
 		this.down = down;
 		this.collisionLayer = collisionLayer;
+		this.sword = sword;
+		this.treeMonArray = treeMonArray;
+		this.slimeMonArray = slimeMonArray;
+		this.fireMonArray = fireMonArray;
+		
+		r1 = new Rectangle();
+		r2 = new Rectangle();
 	}
 	
 	public void draw(SpriteBatch spriteBatch){
@@ -39,7 +62,6 @@ public class Player extends Sprite {
 	}
 	
 	public void update(float delta){
-		
 		//save old position
 		float oldX = getX(), oldY = getY();
 		boolean collisionX = false, collisionY = false;
@@ -48,10 +70,13 @@ public class Player extends Sprite {
 		setX(getX() + velocity.x * delta);
 		
 		_x = getX() + 8; _y = getY(); pwidth = 16; pheight = 16;
-		if(velocity.x < 0) // going left
+		if(velocity.x < 0){ // going left
 			collisionX = collidesLeft();
-		else if(velocity.x > 0) // going right
+			direction = 0;
+		}else if(velocity.x > 0){ // going right
 			collisionX = collidesRight();
+			direction = 1;
+		}
 
 		//react to x collision
 		if(collisionX){
@@ -66,23 +91,101 @@ public class Player extends Sprite {
 		if(velocity.y < 0){ // going down
 			_y = getY();
 			collisionY = collidesBottom();
-			}
+			direction = 2;
+		}
 		else if(velocity.y > 0){ // going up
 			_y = getY() + 12;
 			collisionY = collidesTop();
-			}
+			direction = 3;
+		}
 		
 		//react to y collision
 		if(collisionY){
 			setY(oldY);
 			velocity.y = 0;
-		}
+		}		
+		
+		//checks if monster is hit
+		checkCollisionwithMonster();
 
+		//check player health
+		if(health < 0){
+			this.setColor(this.getColor().r, this.getColor().g, this.getColor().b, 0);
+			setY(oldY);
+			setX(oldX);
+		}else{
+			this.setColor(this.getColor().r, this.getColor().g, this.getColor().b, 1);
+		}
+		
+		givePostionToSword(getX(),getY());
+		
 		// update animation
 		animationTime += delta;
-		setRegion(velocity.x < 0 ? left.getKeyFrame(animationTime) : velocity.x > 0 ? right.getKeyFrame(animationTime) : velocity.y > 0 ? up.getKeyFrame(animationTime) : velocity.y < 0 ? down.getKeyFrame(animationTime) : still.getKeyFrame(animationTime));
+	//	setRegion(velocity.x < 0 ? left.getKeyFrame(animationTime) : velocity.x > 0 ? right.getKeyFrame(animationTime) : velocity.y > 0 ? up.getKeyFrame(animationTime) : velocity.y < 0 ? down.getKeyFrame(animationTime) : still.getKeyFrame(animationTime));
+		switch(direction){
+		case 0:
+			setRegion(left.getKeyFrame(animationTime));
+			break;
+		case 1:
+			setRegion(right.getKeyFrame(animationTime));
+			break;
+		case 2:
+			setRegion(down.getKeyFrame(animationTime));
+			break;
+		case 3:
+			setRegion(up.getKeyFrame(animationTime));
+			break;
+		}
 		if(velocity.x == 0 && velocity.y == 0) animationTime = 0;
 
+	}
+
+	private void checkCollisionwithMonster() {
+		//set sword bounding box
+		r1.set(this.getX(),this.getY(),this.getWidth(),this.getHeight());
+		
+		if(Math.ceil(this.getColor().a) == 1 && System.nanoTime() - oldTime >= cdTime){
+			for(TreeMonster treeMon : treeMonArray){
+				if(treeMon.isVisible()){
+					r2.set(treeMon.getX()+14, treeMon.getY(), treeMon.getWidth()-26, treeMon.getHeight());
+					if (!r1.overlaps(r2)) continue;
+					System.out.println(health);
+					oldTime = System.nanoTime();
+					health--;
+					break;
+				}
+			}
+		}
+		
+		if(Math.ceil(this.getColor().a) == 1 && System.nanoTime() - oldTime >= cdTime){
+			for(SlimeMonster slimeMon : slimeMonArray){
+				if(slimeMon.isVisible()){
+					r2.set(slimeMon.getX()+12, slimeMon.getY(), slimeMon.getWidth()-22, slimeMon.getHeight());
+					if (!r1.overlaps(r2)) continue;
+					System.out.println(health);
+					oldTime = System.nanoTime();
+					health--;
+					break;
+				}
+			}
+		}
+		
+		if(Math.ceil(this.getColor().a) == 1 && System.nanoTime() - oldTime >= cdTime){
+			for(FireMonster fireMon : fireMonArray){
+				if(fireMon.isVisible()){
+					r2.set(fireMon.getX()+14, fireMon.getY(), fireMon.getWidth()-26, fireMon.getHeight());
+					if (!r1.overlaps(r2)) continue;
+					System.out.println(health);
+					oldTime = System.nanoTime();
+					health--;
+					break;
+				}
+			}
+		}
+	}
+
+	private void givePostionToSword(float x, float y) {
+		sword.setPositionPlayer(x,y);
 	}
 
 	private boolean isCellBlocked(float x, float y) {
@@ -121,7 +224,7 @@ public class Player extends Sprite {
 	public boolean collidesRight() {
 		for(float step = 0; step < pheight; step += collisionLayer.getTileHeight() / 2)
 			if(isCellBlocked(_x + pwidth , _y + step)){
-				System.out.println("Rechts Collision");
+				//System.out.println("Rechts Collision");
 				return true;}	
 		return false;
 	}
@@ -129,7 +232,7 @@ public class Player extends Sprite {
 	public boolean collidesLeft() {
 		for(float step = 0; step < pheight; step += collisionLayer.getTileHeight() / 2)
 			if(isCellBlocked(_x, _y + step)){
-				System.out.println("Links Collision");
+				//System.out.println("Links Collision");
 				return true;}
 		return false;
 	}
@@ -137,7 +240,7 @@ public class Player extends Sprite {
 	public boolean collidesTop() {
 		for(float step = 0; step < pwidth; step += collisionLayer.getTileWidth() / 2)
 			if(isCellBlocked(_x + step, _y + pheight)){
-				System.out.println("Oben Collision");
+				//System.out.println("Oben Collision");
 				return true;}
 		return false;
 	}
@@ -145,9 +248,37 @@ public class Player extends Sprite {
 	public boolean collidesBottom() {
 		for(float step = 0; step < pwidth; step += collisionLayer.getTileWidth() / 2)
 			if(isCellBlocked(_x + step, _y)){
-				System.out.println("Unten Collision");
+				//System.out.println("Unten Collision");
 				return true;}
 		return false;
+	}
+	
+	public void moveUp(boolean walk){
+		velocity.y = (walk == true) ? speed : 0;
+	}
+	
+	public void moveDown(boolean walk){
+		velocity.y = (walk == true) ? -speed : 0;
+	}
+	
+	public void moveRight(boolean walk){
+		velocity.x = (walk == true) ? speed : 0;
+	}
+	
+	public void moveLeft(boolean walk){
+		velocity.x = (walk == true) ? -speed : 0;
+	}
+	
+	public void swordFireAttack(boolean attack){		
+		sword.setSwordFire(attack, direction);
+	}
+	
+	public void swordLightningAttack(boolean attack){
+		sword.setSwordLightning(attack, direction);
+	}
+	
+	public void swordWaterAttack(boolean attack){
+		sword.setSwordWater(attack, direction);
 	}
 	
 	public Vector2 getVelocity() {
@@ -180,5 +311,13 @@ public class Player extends Sprite {
 
 	public void setCollisionLayer(TiledMapTileLayer collisionLayer) {
 		this.collisionLayer = collisionLayer;
+	}
+	
+	public int getHealth() {
+		return health;
+	}
+
+	public void setHealth(int health) {
+		this.health = health;
 	}
 }

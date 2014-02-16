@@ -10,6 +10,7 @@ public class Main {
 		cfg.useGL20 = true;
 		cfg.width = 1280;
 		cfg.height = 720;
+		cfg.fullscreen = true;
 		
 		new LwjglApplication(new EolGame(), cfg);
 	}

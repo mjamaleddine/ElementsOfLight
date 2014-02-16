@@ -7,11 +7,17 @@ import com.senshu.eol.entities.Player;
 
 public class KeyboardInput implements InputProcessor {
 
-	Player player;
+	Player player1;
+	//Player player2;
+	//Player player3;
+	//Player player4;
 	Vector2 velocity;
 	
-	public KeyboardInput(Player player){
-		this.player = player;
+	public KeyboardInput(Player player1/*,Player player2,Player player3,Player player4*/){
+		this.player1 = player1;
+		//this.player2 = player2;
+		//this.player3 = player3;
+		//this.player4 = player4;
 	}
 	
 	
@@ -19,27 +25,19 @@ public class KeyboardInput implements InputProcessor {
 	public boolean keyDown(int keycode) {
 		switch(keycode){
 		case Keys.W:
-			velocity = player.getVelocity();
-			velocity.y = player.getSpeed();
-			player.setVelocity(velocity);
+			player1.moveUp(true);
 			break;
 		case Keys.A:
-			velocity = player.getVelocity();
-			velocity.x = -player.getSpeed();
-			player.setVelocity(velocity);
+			player1.moveLeft(true);
 			break;
 		case Keys.D:
-			velocity = player.getVelocity();
-			velocity.x = player.getSpeed();
-			player.setVelocity(velocity);
+			player1.moveRight(true);
 			break;
 		case Keys.S:
-			velocity = player.getVelocity();
-			velocity.y = -player.getSpeed();
-			player.setVelocity(velocity);
+			player1.moveDown(true);
 			break;
 		case Keys.R:
-			player.setSpeed(360);
+			player1.setSpeed(360);
 			break;
 		}
 		return false;
@@ -50,18 +48,14 @@ public class KeyboardInput implements InputProcessor {
 		switch(keycode){
 		case Keys.W:
 		case Keys.S:
-			velocity = player.getVelocity();
-			velocity.y = 0;
-			player.setVelocity(velocity);
+			player1.moveDown(false);
 			break;
 		case Keys.A:
 		case Keys.D:
-			velocity = player.getVelocity();
-			velocity.x = 0;
-			player.setVelocity(velocity);
+			player1.moveRight(false);
 			break;
 		case Keys.R:
-			player.setSpeed(120);
+			player1.setSpeed(120);
 			break;
 		}
 		return false;
