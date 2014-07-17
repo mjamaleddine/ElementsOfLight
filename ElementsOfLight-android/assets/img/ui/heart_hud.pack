@@ -1,0 +1,53 @@
+heart_hud.png
+format: RGBA8888
+filter: Nearest, Nearest
+repeat: none
+heart6
+  rotate: false
+  xy: 0, 0
+  size: 136, 19
+  orig: 68, 9
+  offset: 0, 0
+  index: -1
+heart5
+  rotate: false
+  xy: 0, 19
+  size: 136, 19
+  orig: 68, 9
+  offset: 0, 0
+  index: -1
+heart4
+  rotate: false
+  xy: 0, 38
+  size: 136, 19
+  orig: 68, 9
+  offset: 0, 0
+  index: -1
+heart3
+  rotate: false
+  xy: 0, 57
+  size: 136, 19
+  orig: 68, 9
+  offset: 0, 0
+  index: -1
+heart2
+  rotate: false
+  xy: 0, 76
+  size: 136, 19
+  orig: 68, 9
+  offset: 0, 0
+  index: -1
+heart1
+  rotate: false
+  xy: 0, 95
+  size: 136, 19
+  orig: 68, 9
+  offset: 0, 0
+  index: -1
+heart0
+  rotate: false
+  xy: 0, 114
+  size: 136, 19
+  orig: 68, 9
+  offset: 0, 0
+  index: -1

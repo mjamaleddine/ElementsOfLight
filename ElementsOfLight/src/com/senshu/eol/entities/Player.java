@@ -3,20 +3,29 @@ package com.senshu.eol.entities;
 import java.util.ArrayList;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.senshu.eol.EolGame;
 
 public class Player extends Sprite {
 
+	public static int numOfPlayers = 0;
+	public final int PLAYER;
+	
 	/** the movement velocity */
 	private Vector2 velocity = new Vector2();
 	
-	private float speed = 60 * 2, gravity = 6 * 1.8f, animationTime = 0, oldTime, cdTime = 500000000;
+	private float speed = 50 * 2, animationTime = 0, oldTime, cdTime = 500000000;
 	
 	private Animation left, right, up , down;
 	private TiledMapTileLayer collisionLayer;
@@ -36,11 +45,19 @@ public class Player extends Sprite {
 	ArrayList<TreeMonster> treeMonArray;
 	ArrayList<SlimeMonster> slimeMonArray;
 	ArrayList<FireMonster> fireMonArray;
+	
+	private ShapeRenderer collisionDebug;
+
+	private OrthographicCamera camera;
+	
+	private TextureAtlas heartHud;
+	
+	private Sprite heartHudSprite;
 
 	
 	public Player(Animation still, Animation left, Animation right,
-			Animation up, Animation down, TiledMapTileLayer collisionLayer, Sword sword, 
-				ArrayList<TreeMonster> treeMonArray, ArrayList<SlimeMonster> slimeMonArray, ArrayList<FireMonster> fireMonArray){
+			Animation up, Animation down, TiledMapTileLayer collisionLayer , Sword sword, 
+				ArrayList<TreeMonster> treeMonArray, ArrayList<SlimeMonster> slimeMonArray, ArrayList<FireMonster> fireMonArray, OrthographicCamera camera){
 		super(still.getKeyFrame(0));
 		this.left = left;
 		this.right = right;
@@ -52,16 +69,43 @@ public class Player extends Sprite {
 		this.slimeMonArray = slimeMonArray;
 		this.fireMonArray = fireMonArray;
 		
+		numOfPlayers ++;
+		PLAYER = numOfPlayers;
+				
 		r1 = new Rectangle();
 		r2 = new Rectangle();
+		
+		this.camera = camera;
+		collisionDebug = new ShapeRenderer();
+		
+		//Initilize Heart Hud
+		heartHud = new TextureAtlas("img/ui/heart_hud.pack");
+		heartHudSprite = heartHud.createSprite("heart"+health);
+	}
+	
+	private void healthBarinit() {
+		collisionDebug.setProjectionMatrix(camera.combined);
+		if (EolGame.DEBUG) {
+			collisionDebug.begin(ShapeType.Line);
+			collisionDebug.setColor(1, 0, 0, 0.5f);
+			collisionDebug.rect(this.getX(), this.getY(), 32, 32);
+			collisionDebug.end();
+		}
 	}
 	
 	public void draw(SpriteBatch spriteBatch){
 		update(Gdx.graphics.getDeltaTime());
 		super.draw(spriteBatch);
+		spriteBatch.end();
+		healthBarinit();
+		spriteBatch.begin();
+		heartHudSprite.draw(spriteBatch);
 	}
 	
 	public void update(float delta){
+		//update Hud
+		updateHeartBar();
+		
 		//save old position
 		float oldX = getX(), oldY = getY();
 		boolean collisionX = false, collisionY = false;
@@ -109,7 +153,7 @@ public class Player extends Sprite {
 		checkCollisionwithMonster();
 
 		//check player health
-		if(health < 0){
+		if(health <= 0){
 			this.setColor(this.getColor().r, this.getColor().g, this.getColor().b, 0);
 			setY(oldY);
 			setX(oldX);
@@ -144,14 +188,14 @@ public class Player extends Sprite {
 		//set sword bounding box
 		r1.set(this.getX(),this.getY(),this.getWidth(),this.getHeight());
 		
+		//check collision with monsters		
 		if(Math.ceil(this.getColor().a) == 1 && System.nanoTime() - oldTime >= cdTime){
 			for(TreeMonster treeMon : treeMonArray){
 				if(treeMon.isVisible()){
-					r2.set(treeMon.getX()+14, treeMon.getY(), treeMon.getWidth()-26, treeMon.getHeight());
+					r2.set(treeMon.getCollisionBox());
 					if (!r1.overlaps(r2)) continue;
-					System.out.println(health);
 					oldTime = System.nanoTime();
-					health--;
+					setHealth(health-1);
 					break;
 				}
 			}
@@ -160,11 +204,10 @@ public class Player extends Sprite {
 		if(Math.ceil(this.getColor().a) == 1 && System.nanoTime() - oldTime >= cdTime){
 			for(SlimeMonster slimeMon : slimeMonArray){
 				if(slimeMon.isVisible()){
-					r2.set(slimeMon.getX()+12, slimeMon.getY(), slimeMon.getWidth()-22, slimeMon.getHeight());
+					r2.set(slimeMon.getCollisionBox());
 					if (!r1.overlaps(r2)) continue;
-					System.out.println(health);
 					oldTime = System.nanoTime();
-					health--;
+					setHealth(health-1);
 					break;
 				}
 			}
@@ -173,11 +216,10 @@ public class Player extends Sprite {
 		if(Math.ceil(this.getColor().a) == 1 && System.nanoTime() - oldTime >= cdTime){
 			for(FireMonster fireMon : fireMonArray){
 				if(fireMon.isVisible()){
-					r2.set(fireMon.getX()+14, fireMon.getY(), fireMon.getWidth()-26, fireMon.getHeight());
+					r2.set(fireMon.getCollisionBox());
 					if (!r1.overlaps(r2)) continue;
-					System.out.println(health);
 					oldTime = System.nanoTime();
-					health--;
+					setHealth(health-1);
 					break;
 				}
 			}
@@ -297,14 +339,6 @@ public class Player extends Sprite {
 		this.speed = speed;
 	}
 
-	public float getGravity() {
-		return gravity;
-	}
-
-	public void setGravity(float gravity) {
-		this.gravity = gravity;
-	}
-
 	public TiledMapTileLayer getCollisionLayer() {
 		return collisionLayer;
 	}
@@ -319,5 +353,30 @@ public class Player extends Sprite {
 
 	public void setHealth(int health) {
 		this.health = health;
+	}
+	
+	public void updateHeartBar(){
+		switch (PLAYER) {
+		case 1:
+			heartHudSprite = heartHud.createSprite("heart"+health);
+			heartHudSprite.setX(camera.position.x-(Gdx.graphics.getWidth()/4));
+			heartHudSprite.setY((camera.position.y+(Gdx.graphics.getHeight()/4))-heartHudSprite.getHeight()*2);
+			break;
+		case 2:
+			heartHudSprite = heartHud.createSprite("heart"+health);
+			heartHudSprite.setX(camera.position.x+(Gdx.graphics.getWidth()/4)-heartHudSprite.getWidth()*2);
+			heartHudSprite.setY((camera.position.y+(Gdx.graphics.getHeight()/4))-heartHudSprite.getHeight()*2);
+			break;
+		case 3:
+			heartHudSprite = heartHud.createSprite("heart"+health);
+			heartHudSprite.setX(camera.position.x-(Gdx.graphics.getWidth()/4));
+			heartHudSprite.setY(camera.position.y-(Gdx.graphics.getHeight()/4));
+			break;
+		case 4:
+			heartHudSprite = heartHud.createSprite("heart"+health);
+			heartHudSprite.setX(camera.position.x+(Gdx.graphics.getWidth()/4)-heartHudSprite.getWidth()*2);
+			heartHudSprite.setY(camera.position.y-(Gdx.graphics.getHeight()/4));
+			break;
+		}
 	}
 }

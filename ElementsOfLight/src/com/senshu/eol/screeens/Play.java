@@ -5,9 +5,11 @@ import java.util.ArrayList;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
@@ -16,6 +18,7 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Rectangle;
+import com.senshu.eol.EolGame;
 import com.senshu.eol.entities.FireMonster;
 import com.senshu.eol.entities.Player;
 import com.senshu.eol.entities.SlimeMonster;
@@ -82,6 +85,10 @@ public class Play implements Screen {
 
 	private Music music;
 	
+	private BitmapFont font;
+	
+	private FPSLogger fpsCounter = new FPSLogger();
+	
 	@Override
 	public void render(float delta) {
 		Gdx.gl.glClearColor(0, 0, 0, 1);
@@ -94,7 +101,17 @@ public class Play implements Screen {
 		renderer.render();
 		
 		renderer.getSpriteBatch().begin();
-			
+		
+		sword1.draw(renderer.getSpriteBatch());
+		sword2.draw(renderer.getSpriteBatch());
+//		sword3.draw(renderer.getSpriteBatch());
+//		sword4.draw(renderer.getSpriteBatch());
+//		
+//		player4.draw(renderer.getSpriteBatch());
+//		player3.draw(renderer.getSpriteBatch());
+		player2.draw(renderer.getSpriteBatch());
+		player1.draw(renderer.getSpriteBatch());
+		
 		for(TreeMonster treeMon : treeMonArray){
 			treeMon.draw(renderer.getSpriteBatch());
 	    }
@@ -107,16 +124,8 @@ public class Play implements Screen {
 			fireMon.draw(renderer.getSpriteBatch());
 	    }
 		
-		sword1.draw(renderer.getSpriteBatch());
-		sword2.draw(renderer.getSpriteBatch());
-		sword3.draw(renderer.getSpriteBatch());
-		sword4.draw(renderer.getSpriteBatch());
-		
-		player4.draw(renderer.getSpriteBatch());
-		player2.draw(renderer.getSpriteBatch());
-		player3.draw(renderer.getSpriteBatch());
-		player1.draw(renderer.getSpriteBatch());
-		
+		//font.draw(renderer.getSpriteBatch(),"Player 1 Health: "+Float.toString(player1.getHealth()), camera.position.x-(Gdx.graphics.getWidth()/4), camera.position.y+(Gdx.graphics.getHeight()/4));
+		if(EolGame.DEBUG)fpsCounter.log();
 		renderer.getSpriteBatch().end();
 	}
 
@@ -135,40 +144,42 @@ public class Play implements Screen {
 		slimeMonArray = new ArrayList<SlimeMonster>();
 		fireMonArray = new ArrayList<FireMonster>();
 		
+		font = new BitmapFont();		
+		
 		textureAtlasinit();		
 			
 		animationSetter();
 		
-		spawnMonster(map);
-		
 		sword1 = new Sword(swordFireleft, swordFireright, swordFireup, swordFiredown, swordLightningleft, swordLightningright, swordLightningup, swordLightningdown, swordWaterleft, swordWaterright, swordWaterup, swordWaterdown, treeMonArray, slimeMonArray, fireMonArray);
-		player1 = new Player(player1still, player1left, player1right, player1up , player1down, (TiledMapTileLayer) map.getLayers().get(0),sword1, treeMonArray, slimeMonArray, fireMonArray);
+		player1 = new Player(player1still, player1left, player1right, player1up , player1down, (TiledMapTileLayer) map.getLayers().get(0) ,sword1, treeMonArray, slimeMonArray, fireMonArray, camera);
 		sword1.setPosition(35 * player1.getCollisionLayer().getTileWidth(),26 * player1.getCollisionLayer().getTileHeight());
 		player1.setPosition(35 * player1.getCollisionLayer().getTileWidth(), 26 * player1.getCollisionLayer().getTileHeight());
 		
 		sword2 = new Sword(swordFireleft, swordFireright, swordFireup, swordFiredown, swordLightningleft, swordLightningright, swordLightningup, swordLightningdown, swordWaterleft, swordWaterright, swordWaterup, swordWaterdown, treeMonArray, slimeMonArray, fireMonArray);
 		sword2.setPosition(10,10);
-		player2 = new Player(player2still, player2left, player2right, player2up , player2down, (TiledMapTileLayer) map.getLayers().get(0),sword2, treeMonArray, slimeMonArray, fireMonArray);
+		player2 = new Player(player2still, player2left, player2right, player2up , player2down, (TiledMapTileLayer) map.getLayers().get(0) ,sword2, treeMonArray, slimeMonArray, fireMonArray, camera);
 		player2.setPosition(35 * player2.getCollisionLayer().getTileWidth()+32, 26 * player2.getCollisionLayer().getTileHeight());
-		
-		sword3 = new Sword(swordFireleft, swordFireright, swordFireup, swordFiredown, swordLightningleft, swordLightningright, swordLightningup, swordLightningdown, swordWaterleft, swordWaterright, swordWaterup, swordWaterdown, treeMonArray, slimeMonArray, fireMonArray);
-		sword3.setPosition(10,10);
-		player3 = new Player(player3still, player3left, player3right, player3up , player3down, (TiledMapTileLayer) map.getLayers().get(0),sword3, treeMonArray, slimeMonArray, fireMonArray);
-		player3.setPosition(35 * player3.getCollisionLayer().getTileWidth(), 26 * player3.getCollisionLayer().getTileHeight()+32);
-		
-		sword4 = new Sword(swordFireleft, swordFireright, swordFireup, swordFiredown, swordLightningleft, swordLightningright, swordLightningup, swordLightningdown, swordWaterleft, swordWaterright, swordWaterup, swordWaterdown, treeMonArray, slimeMonArray, fireMonArray);
-		sword4.setPosition(10,10);
-		player4 = new Player(player4still, player4left, player4right, player4up , player4down, (TiledMapTileLayer) map.getLayers().get(0),sword4, treeMonArray, slimeMonArray, fireMonArray);
-		player4.setPosition(35 * player4.getCollisionLayer().getTileWidth()+32, 26 * player4.getCollisionLayer().getTileHeight()+32);
+//		
+//		sword3 = new Sword(swordFireleft, swordFireright, swordFireup, swordFiredown, swordLightningleft, swordLightningright, swordLightningup, swordLightningdown, swordWaterleft, swordWaterright, swordWaterup, swordWaterdown, treeMonArray, slimeMonArray, fireMonArray);
+//		sword3.setPosition(10,10);
+//		player3 = new Player(player3still, player3left, player3right, player3up , player3down, (TiledMapTileLayer) map.getLayers().get(0),sword3, treeMonArray, slimeMonArray, fireMonArray, camera);
+//		player3.setPosition(35 * player3.getCollisionLayer().getTileWidth(), 26 * player3.getCollisionLayer().getTileHeight()+32);
+//		
+//		sword4 = new Sword(swordFireleft, swordFireright, swordFireup, swordFiredown, swordLightningleft, swordLightningright, swordLightningup, swordLightningdown, swordWaterleft, swordWaterright, swordWaterup, swordWaterdown, treeMonArray, slimeMonArray, fireMonArray);
+//		sword4.setPosition(10,10);
+//		player4 = new Player(player4still, player4left, player4right, player4up , player4down, (TiledMapTileLayer) map.getLayers().get(0),sword4, treeMonArray, slimeMonArray, fireMonArray, camera);
+//		player4.setPosition(35 * player4.getCollisionLayer().getTileWidth()+32, 26 * player4.getCollisionLayer().getTileHeight()+32);
 
+		spawnMonster(map);
+		
 		//Gdx.input.setInputProcessor(new KeyboardInput(player1));
 		Gdx.input.setInputProcessor(new GamepadInput(player1,player2,player3,player4));
 		
 		//Music
-		music = Gdx.audio.newMusic(Gdx.files.internal("sound/fieldtheme.mp3"));
-		music.setVolume(0.5f);  
-		music.setLooping(true);
-		music.play();
+//		music = Gdx.audio.newMusic(Gdx.files.internal("sound/darklights.mp3"));
+//		music.setVolume(0.4f);  
+//		music.setLooping(true);
+//		music.play();
 		
 	}
 	
@@ -195,15 +206,15 @@ public class Play implements Screen {
 		player1Atlas.dispose();
 		player2.getTexture().dispose();
 		player2Atlas.dispose();
-		player3.getTexture().dispose();
-		player3Atlas.dispose();
-		player4.getTexture().dispose();
-		player4Atlas.dispose();
+//		player3.getTexture().dispose();
+//		player3Atlas.dispose();
+//		player4.getTexture().dispose();
+//		player4Atlas.dispose();
 		
 		sword1.getTexture().dispose();
 		sword2.getTexture().dispose();
-		sword3.getTexture().dispose();
-		sword4.getTexture().dispose();
+//		sword3.getTexture().dispose();
+//		sword4.getTexture().dispose();
 
 		swordFireAtlas.dispose();
 		swordLightningAtlas.dispose();
@@ -213,10 +224,11 @@ public class Play implements Screen {
 		slimeMonsterAtlas.dispose();
 		fireMonsterAtlas.dispose();
 		
-		music.dispose();
+		//music.dispose();
 	}
 	
 	private void textureAtlasinit() {
+		
 		player1Atlas = new TextureAtlas("img/entities/player/player1.pack");
 		player2Atlas = new TextureAtlas("img/entities/player/player2.pack");
 		player3Atlas = new TextureAtlas("img/entities/player/player3.pack");
@@ -224,47 +236,48 @@ public class Play implements Screen {
 		
 		swordFireAtlas = new TextureAtlas("img/weapons/swordfire.pack");
 		swordLightningAtlas = new TextureAtlas("img/weapons/swordlightning.pack");
-		swordWaterAtlas = new TextureAtlas("img/weapons/swordWater.pack");
+		swordWaterAtlas = new TextureAtlas("img/weapons/swordwater.pack");
 		
 		treeMonsterAtlas = new TextureAtlas("img/entities/enemies/tree.pack");
 		slimeMonsterAtlas = new TextureAtlas("img/entities/enemies/slime.pack");
 		fireMonsterAtlas = new TextureAtlas("img/entities/enemies/fire.pack");
+		
 	}
 	
 	private void spawnMonster(TiledMap map) {
 		int i = 0;
-		for(MapObject object : map.getLayers().get("treeMonster").getObjects()){
-			if(object instanceof RectangleMapObject) {
-				RectangleMapObject rectObject = (RectangleMapObject) object;
-				Rectangle spawn = rectObject.getRectangle();			
-				//SPWAN MONSTERS
-				treeMonArray.add(new TreeMonster(150, treeMonsterup, treeMonsterdown));
-				treeMonArray.get(i).setPosition(spawn.x, spawn.y);
-				i++;
-			}
-		}
-		i=0;
+//		for(MapObject object : map.getLayers().get("treeMonster").getObjects()){
+//			if(object instanceof RectangleMapObject) {
+//				RectangleMapObject rectObject = (RectangleMapObject) object;
+//				Rectangle spawn = rectObject.getRectangle();			
+//				//SPAWN MONSTERS
+//				treeMonArray.add(new TreeMonster(60, treeMonsterup, treeMonsterdown, camera));
+//				treeMonArray.get(i).setPosition(spawn.x, spawn.y);
+//				i++;
+//			}
+//		}
+//		i=0;
 		for(MapObject object : map.getLayers().get("slimeMonster").getObjects()){
 			if(object instanceof RectangleMapObject) {
 				RectangleMapObject rectObject = (RectangleMapObject) object;
 				Rectangle spawn = rectObject.getRectangle();			
-				//SPWAN MONSTERS
-				slimeMonArray.add(new SlimeMonster(80, slimeMonsterleft, slimeMonsterright));
+				//SPAWN MONSTERS
+				slimeMonArray.add(new SlimeMonster(20, slimeMonsterleft, slimeMonsterright, camera, player1));
 				slimeMonArray.get(i).setPosition(spawn.x, spawn.y);
 				i++;
 			}
 		}
-		i=0;
-		for(MapObject object : map.getLayers().get("fireMonster").getObjects()){
-			if(object instanceof RectangleMapObject) {
-				RectangleMapObject rectObject = (RectangleMapObject) object;
-				Rectangle spawn = rectObject.getRectangle();			
-				//SPWAN MONSTERS
-				fireMonArray.add(new FireMonster(80, fireMonsterup, fireMonsterdown));
-				fireMonArray.get(i).setPosition(spawn.x, spawn.y);
-				i++;
-			}
-		}
+//		i=0;
+//		for(MapObject object : map.getLayers().get("fireMonster").getObjects()){
+//			if(object instanceof RectangleMapObject) {
+//				RectangleMapObject rectObject = (RectangleMapObject) object;
+//				Rectangle spawn = rectObject.getRectangle();			
+//				//SPAWN MONSTERS
+//				fireMonArray.add(new FireMonster(40, fireMonsterup, fireMonsterdown, camera));
+//				fireMonArray.get(i).setPosition(spawn.x, spawn.y);
+//				i++;
+//			}
+//		}
 	}
 	
 

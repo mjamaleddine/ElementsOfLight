@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" width="100" height="100" tilewidth="16" tileheight="16">
+ <tileset firstgid="1" name="cave" tilewidth="16" tileheight="16">
+  <image source="cave.png" width="256" height="336"/>
+ </tileset>
+ <tileset firstgid="337" name="sewer_1" tilewidth="16" tileheight="16">
+  <image source="sewer_1.png" width="256" height="352"/>
+ </tileset>
+ <layer name="Kachelebene 1" width="100" height="100">
+  <data encoding="base64" compression="zlib">
+   eJzt0YENQEAQRNG9ElEBKkD/ievBJUa8l0wBu78KAAAAAAAAAAAAAAAAAAAAAAAAAOBfplY1D9zS3r7o29b+v23gdj0e0SOLHln0yKJHFj2y6JFFjyx6ZNEjix5Z9Mhy9P+dA3fpAQAAAAAAAAAAAAAAAPAJN7vccbM=
+  </data>
+ </layer>
+</map>

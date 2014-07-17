@@ -187,7 +187,7 @@ public class Sword extends Sprite {
 		
 		if(Math.ceil(this.getColor().a) == 1 && swordFireAttack == true){
 			for(TreeMonster treeMon : treeMonArray){
-				r2.set(treeMon.getX(), treeMon.getY(), treeMon.getWidth(), treeMon.getHeight());
+				r2.set(treeMon.getCollisionBox());
 				if (!r1.overlaps(r2)) continue;
 				treeMon.setHealth(treeMon.getHealth()-1);
 				break;
@@ -196,16 +196,16 @@ public class Sword extends Sprite {
 		
 		if(Math.ceil(this.getColor().a) == 1 && swordLightningAttack == true){
 			for(SlimeMonster slimeMon : slimeMonArray){
-				r2.set(slimeMon.getX(), slimeMon.getY(), slimeMon.getWidth(), slimeMon.getHeight());
+				r2.set(slimeMon.getCollisionBox());
 				if (!r1.overlaps(r2)) continue;
 				slimeMon.setHealth(slimeMon.getHealth()-1);
-				break;
+//				break;
 			}
 		}
 		
 		if(Math.ceil(this.getColor().a) == 1 && swordWaterAttack == true){
 			for(FireMonster fireMon : fireMonArray){
-				r2.set(fireMon.getX(), fireMon.getY(), fireMon.getWidth(), fireMon.getHeight());
+				r2.set(fireMon.getCollisionBox());
 				if (!r1.overlaps(r2)) continue;
 				fireMon.setHealth(fireMon.getHealth()-1);
 				break;

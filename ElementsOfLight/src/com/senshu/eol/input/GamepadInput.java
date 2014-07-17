@@ -62,15 +62,15 @@ public class GamepadInput implements ControllerListener, InputProcessor {
 	            switch(buttonIndex){
 	            	//Button B
 	            	case 1:
-	        			player1.swordFireAttack(true);
+	            		if(player1.getHealth()>0)player1.swordFireAttack(true);
 	        			break;
 	        		//Button X
 	            	case 2:
-	        			player1.swordWaterAttack(true);
+	            		if(player1.getHealth()>0)player1.swordWaterAttack(true);
 	        			break;
 	        		//Button Y
 	            	case 3:
-	        			player1.swordLightningAttack(true);
+	            		if(player1.getHealth()>0)player1.swordLightningAttack(true);
 	        			break;
 	        		//Button RB
 	            	case 5:
@@ -83,15 +83,15 @@ public class GamepadInput implements ControllerListener, InputProcessor {
 	            switch(buttonIndex){
 	            	//Button B
 	            	case 1:
-	        			player2.swordFireAttack(true);
+	            		if(player1.getHealth()>0)player2.swordFireAttack(true);
 	        			break;
 	        		//Button X
 	            	case 2:
-	        			player2.swordWaterAttack(true);
+	            		if(player1.getHealth()>0)player2.swordWaterAttack(true);
 	        			break;
 	        		//Button Y
 	            	case 3:
-	        			player2.swordLightningAttack(true);
+	            		if(player1.getHealth()>0)player2.swordLightningAttack(true);
 	        			break;
 	            }
             }
@@ -145,20 +145,21 @@ public class GamepadInput implements ControllerListener, InputProcessor {
 	            		break;
 	            	//Button B
 	            	case 1:
-	        			player1.swordFireAttack(false);
+	            		player1.swordFireAttack(false);
 	        			break;
 	        		//Button X
 	            	case 2:
-	        			player1.swordWaterAttack(false);
+	            		player1.swordWaterAttack(false);
 	        			break;
 	        		//Button Y
 	            	case 3:
-	        			player1.swordLightningAttack(false);
+	            		player1.swordLightningAttack(false);
 	        			break;
 		        	//Button RB
 	            	case 5:
 	            		player1.setSpeed(180);
 	            		break;
+	            	
 	            }
             }
             //Controller 2 config
@@ -426,6 +427,9 @@ public class GamepadInput implements ControllerListener, InputProcessor {
 			break;
 		case Keys.L:
 			player1.swordWaterAttack(true);
+			break;
+		case Keys.F:
+			player1.setHealth(6);
 			break;
 		case Keys.ESCAPE:
 			Gdx.app.exit();
