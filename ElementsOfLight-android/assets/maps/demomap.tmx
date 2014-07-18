@@ -5,10 +5,189 @@
  </tileset>
  <tileset firstgid="337" name="sewer_1" tilewidth="16" tileheight="16">
   <image source="sewer_1.png" width="256" height="352"/>
+  <tile id="10">
+   <properties>
+    <property name="blocked" value=""/>
+   </properties>
+  </tile>
+  <tile id="11">
+   <properties>
+    <property name="blocked" value=""/>
+   </properties>
+  </tile>
+  <tile id="12">
+   <properties>
+    <property name="blocked" value=""/>
+   </properties>
+  </tile>
+  <tile id="23">
+   <properties>
+    <property name="door" value="open"/>
+   </properties>
+  </tile>
+  <tile id="24">
+   <properties>
+    <property name="blocked" value=""/>
+    <property name="door" value="locked"/>
+   </properties>
+  </tile>
+  <tile id="26">
+   <properties>
+    <property name="blocked" value=""/>
+   </properties>
+  </tile>
+  <tile id="27">
+   <properties>
+    <property name="blocked" value=""/>
+   </properties>
+  </tile>
+  <tile id="28">
+   <properties>
+    <property name="blocked" value=""/>
+   </properties>
+  </tile>
+  <tile id="42">
+   <properties>
+    <property name="blocked" value=""/>
+   </properties>
+  </tile>
+  <tile id="43">
+   <properties>
+    <property name="blocked" value=""/>
+   </properties>
+  </tile>
+  <tile id="44">
+   <properties>
+    <property name="blocked" value=""/>
+   </properties>
+  </tile>
+  <tile id="48">
+   <properties>
+    <property name="blocked" value=""/>
+   </properties>
+  </tile>
+  <tile id="49">
+   <properties>
+    <property name="blocked" value=""/>
+   </properties>
+  </tile>
+  <tile id="50">
+   <properties>
+    <property name="blocked" value=""/>
+   </properties>
+  </tile>
+  <tile id="64">
+   <properties>
+    <property name="blocked" value=""/>
+   </properties>
+  </tile>
+  <tile id="65">
+   <properties>
+    <property name="blocked" value=""/>
+   </properties>
+  </tile>
+  <tile id="66">
+   <properties>
+    <property name="blocked" value=""/>
+   </properties>
+  </tile>
+  <tile id="84">
+   <properties>
+    <property name="blocked" value=""/>
+   </properties>
+  </tile>
+  <tile id="85">
+   <properties>
+    <property name="blocked" value=""/>
+   </properties>
+  </tile>
+  <tile id="86">
+   <properties>
+    <property name="blocked" value=""/>
+   </properties>
+  </tile>
+  <tile id="91">
+   <properties>
+    <property name="blocked" value=""/>
+   </properties>
+  </tile>
+  <tile id="92">
+   <properties>
+    <property name="blocked" value=""/>
+   </properties>
+  </tile>
+  <tile id="93">
+   <properties>
+    <property name="blocked" value=""/>
+   </properties>
+  </tile>
+  <tile id="95">
+   <properties>
+    <property name="blocked" value=""/>
+    <property name="door" value="locked3"/>
+   </properties>
+  </tile>
+  <tile id="96">
+   <properties>
+    <property name="blocked" value=""/>
+   </properties>
+  </tile>
+  <tile id="119">
+   <properties>
+    <property name="blocked" value=""/>
+   </properties>
+  </tile>
+  <tile id="120">
+   <properties>
+    <property name="blocked" value=""/>
+   </properties>
+  </tile>
+  <tile id="156">
+   <properties>
+    <property name="blocked" value=""/>
+    <property name="door" value="locked2"/>
+   </properties>
+  </tile>
  </tileset>
- <layer name="Kachelebene 1" width="100" height="100">
+ <tileset firstgid="689" name="triforce" tilewidth="20" tileheight="18">
+  <image source="triforce.png" width="20" height="18"/>
+ </tileset>
+ <layer name="backbackground" width="100" height="100">
   <data encoding="base64" compression="zlib">
-   eJzt0YENQEAQRNG9ElEBKkD/ievBJUa8l0wBu78KAAAAAAAAAAAAAAAAAAAAAAAAAOBfplY1D9zS3r7o29b+v23gdj0e0SOLHln0yKJHFj2y6JFFjyx6ZNEjix5Z9Mhy9P+dA3fpAQAAAAAAAAAAAAAAAPAJN7vccbM=
+   eJzt2UsKgCAUBdBcZlPHtZlWHBFS0IcyA4tz4E0eju4FB9o0AAAAAAAAAAAAAAAAAHxVDPPwTFcoQ32U0b+QYepFP3nkVqfp7kqTOlrv9s6d7cgXw7aPK7tEH3XRR330AQD3eaMAAAAAAAAAqNMQlqGM9mGW/tiPTdnmDAAAAAAAAAAAAAAAAPzJCObjGsc=
   </data>
  </layer>
+ <layer name="background" width="100" height="100">
+  <data encoding="base64" compression="zlib">
+   eJztnN1qFDEUx7uPqIIiWkULgtgitt5pL6q+QFtfwAv1xu9P8AsULxTaet+L+gS+gwnM2BhOkpOT7O5J9i/8cHcmmUzySzJnMjtdnSwtrQIwcJtg3ue0qKwZThhOOpwyXFNwbouI9XHJcNlhBT7gA/zzccNxsW7YgI+5suz4OGc4r+CcFpk1xwfGxfyBjzjU/QAX+KiLbZu7BUjaEz7goxXgQxe2bbYNO4bdgW3i/53APvio78NfT+IiXXeCj3jb+OsXXKTrHPABH60AH7qAD1304uPCpGydIcRF+BDXQxon1o4f4aOsHrXrV7Me6xlInyPBB68etvzx+RAXaZnwwfPhl1/7+miPuWl4MXBLkH9RfbhrjbWvlbWvr4vmo3Zda7cPfMAHfMAHfMAHfMAHfMAHx4d7f7bZsY+bA5p9WPx7sF593Btwt9Van6vpg+KPIh/2X421gvsD7r3/HQL4iPs4bTgzpWPvEszDh30fI7Smrm2+upI4Xyl2bqLWtq/P2McqcQ4u2ny4v418aHhkeFxpm/Zn+RrjXXcueWt4Z3hfaRt85PsIPQurvU0jGn1o78OL5iP3eaK23/P05qPk3Yha70vMEzuvLsOHKqaxVgcfZT62JsdrCGNd3M8+1L6zA6E07vG3Ap/h4/gdKhujj+9J7XrfdxLbLFcH/DUJKq//Ttb4GT7+//3avIEP+NAGfOgCPnQBH7qAD13Ahy7gQxfwoQv40AV86AI+dAEfuoAPXcCHLuBDF7P0kXoPAD7kf/OS+n1yivE9gNB+btmvDK8Nbzr18UCA5DcQ43sA1L6VjLK/GQ4N3xPpWvVx6HCQ+G75KfQRw/r4QZRly98ntrv88r7/Nux14iNVx1n42JvE2//I83UYyNeyD24dZz0+/H5hSY2XHnxw6zgrH0demakxQ82tLfvg1nHW44Nz3aDOsRcfqTrm+nhewQdnbPTqI8Vepg/p+Ag5oPqJn3ac61r1kVPHWc9Xkni39fGhzUdobFDn0mu8G8P3pT3ebX2+CrVB6JquPd4dffXiI4X1Ufu9/Y0J4l3XR841xPp4mckTw1PDs0gaxLuy8fHB8DWTT4bPhi+RNB8ZDqh+09v4yI2vanDglbNP7ON+d+cvd1+rPnLrPo22lNxnhOLennyE6u6ut9doy9iclGpvqh/0NF+V9m1JW3J85aw5U+fZqg/p87cabVljXT0U97bqQ9q3a7QlB86aM0UvPqTzRGlbcnyOx+LEhC37KO3b3Lbk5pOMo17HB7dv57Sln7b0foYTa7TqQ9q3U9Sc91J9ZsSNNVr1Ubtvl8TJqfx+2bG0PfoomcclcXIsf2zMUWX14IPTViFnpXFyzj0kJ23LPnLvpylnpdeLWH6/D3DKatkHp34SZ1RbUmNDmj+WtmUfnPpx+780Tk7lp44XK6sHH5K1iRr3btOgBx/S/l8aJ+fk56Zt1Qenfi2iwcdfD+MijQ==
+  </data>
+ </layer>
+ <layer name="foreground" width="100" height="100">
+  <data encoding="base64" compression="zlib">
+   eJzt2kEKgkAYgNHs4HWDdtauRTfohl1gogahPuE9kAGRQfgW6o+HAwAznsd/3wEAAPBrt2XbCgAAAABAy8n8NuWiR4oeLXq06NGiR4seLXq06NFyj/Y4L9uP0V7AfplftXiet+jRokeLHi16tFS/BwE+uS7freub86O91skVGDO/afH+3aJHix4terTo0aJHix4terTo0aJHix4terTo0aJHix4to/8rHpONZq8HAAAAAAAAAAAAAAAAgL14ATbULIo=
+  </data>
+ </layer>
+ <objectgroup name="slimeMonster" width="100" height="100">
+  <object x="352" y="891"/>
+  <object x="470" y="880"/>
+  <object x="676" y="886" height="1"/>
+  <object x="685" y="883"/>
+  <object x="539" y="846"/>
+  <object x="273" y="850"/>
+  <object x="273" y="958"/>
+  <object x="390" y="932"/>
+  <object x="380" y="973"/>
+  <object x="566" y="905"/>
+  <object x="490" y="937"/>
+ </objectgroup>
+ <objectgroup name="fireMonster" width="100" height="100">
+  <object x="989" y="423"/>
+  <object x="1122" y="369"/>
+  <object x="1126" y="453"/>
+  <object x="946" y="364"/>
+ </objectgroup>
+ <objectgroup name="treeMonster" width="100" height="100">
+  <object x="139" y="243"/>
+  <object x="83" y="244"/>
+ </objectgroup>
 </map>

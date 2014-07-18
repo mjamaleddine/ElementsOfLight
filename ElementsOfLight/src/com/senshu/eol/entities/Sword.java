@@ -190,7 +190,6 @@ public class Sword extends Sprite {
 				r2.set(treeMon.getCollisionBox());
 				if (!r1.overlaps(r2)) continue;
 				treeMon.setHealth(treeMon.getHealth()-1);
-				break;
 			}
 		}
 		
@@ -199,7 +198,6 @@ public class Sword extends Sprite {
 				r2.set(slimeMon.getCollisionBox());
 				if (!r1.overlaps(r2)) continue;
 				slimeMon.setHealth(slimeMon.getHealth()-1);
-//				break;
 			}
 		}
 		
@@ -208,7 +206,6 @@ public class Sword extends Sprite {
 				r2.set(fireMon.getCollisionBox());
 				if (!r1.overlaps(r2)) continue;
 				fireMon.setHealth(fireMon.getHealth()-1);
-				break;
 			}
 		}
 	}

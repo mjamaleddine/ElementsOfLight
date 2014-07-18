@@ -1,6 +1,7 @@
 package com.senshu.eol.screeens;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -14,7 +15,9 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Rectangle;
@@ -88,6 +91,9 @@ public class Play implements Screen {
 	private BitmapFont font;
 	
 	private FPSLogger fpsCounter = new FPSLogger();
+	private TiledMapTile doorTile;
+	
+	private int numOfVis;
 	
 	@Override
 	public void render(float delta) {
@@ -112,19 +118,38 @@ public class Play implements Screen {
 		player2.draw(renderer.getSpriteBatch());
 		player1.draw(renderer.getSpriteBatch());
 		
+		numOfVis = 0;
 		for(TreeMonster treeMon : treeMonArray){
 			treeMon.draw(renderer.getSpriteBatch());
+			if(!treeMon.isVisible()){
+				numOfVis++;
+				if(numOfVis == treeMonArray.size())
+					openDoorThree();
+			}
 	    }
 		
+		numOfVis = 0;
 		for(SlimeMonster slimeMon : slimeMonArray){
 			slimeMon.draw(renderer.getSpriteBatch());
+			if(!slimeMon.isVisible()){
+				numOfVis++;
+				if(numOfVis == slimeMonArray.size())
+					openDoorOne();
+			}
 	    }
 		
+		numOfVis = 0;
 		for(FireMonster fireMon : fireMonArray){
 			fireMon.draw(renderer.getSpriteBatch());
+			if(!fireMon.isVisible()){
+				numOfVis++;
+				if(numOfVis == fireMonArray.size())
+					openDoorTwo();
+			}
 	    }
 		
 		//font.draw(renderer.getSpriteBatch(),"Player 1 Health: "+Float.toString(player1.getHealth()), camera.position.x-(Gdx.graphics.getWidth()/4), camera.position.y+(Gdx.graphics.getHeight()/4));
+		
 		if(EolGame.DEBUG)fpsCounter.log();
 		renderer.getSpriteBatch().end();
 	}
@@ -137,7 +162,7 @@ public class Play implements Screen {
 
 	@Override
 	public void show() {
-		map = new TmxMapLoader().load("maps/map.tmx");
+		map = new TmxMapLoader().load("maps/demomap.tmx");
 		renderer = new OrthogonalTiledMapRenderer(map);
 		camera = new OrthographicCamera();
 		treeMonArray = new ArrayList<TreeMonster>();
@@ -151,13 +176,13 @@ public class Play implements Screen {
 		animationSetter();
 		
 		sword1 = new Sword(swordFireleft, swordFireright, swordFireup, swordFiredown, swordLightningleft, swordLightningright, swordLightningup, swordLightningdown, swordWaterleft, swordWaterright, swordWaterup, swordWaterdown, treeMonArray, slimeMonArray, fireMonArray);
-		player1 = new Player(player1still, player1left, player1right, player1up , player1down, (TiledMapTileLayer) map.getLayers().get(0) ,sword1, treeMonArray, slimeMonArray, fireMonArray, camera);
+		player1 = new Player(player1still, player1left, player1right, player1up , player1down, map ,sword1, treeMonArray, slimeMonArray, fireMonArray, camera);
 		sword1.setPosition(35 * player1.getCollisionLayer().getTileWidth(),26 * player1.getCollisionLayer().getTileHeight());
 		player1.setPosition(35 * player1.getCollisionLayer().getTileWidth(), 26 * player1.getCollisionLayer().getTileHeight());
 		
 		sword2 = new Sword(swordFireleft, swordFireright, swordFireup, swordFiredown, swordLightningleft, swordLightningright, swordLightningup, swordLightningdown, swordWaterleft, swordWaterright, swordWaterup, swordWaterdown, treeMonArray, slimeMonArray, fireMonArray);
 		sword2.setPosition(10,10);
-		player2 = new Player(player2still, player2left, player2right, player2up , player2down, (TiledMapTileLayer) map.getLayers().get(0) ,sword2, treeMonArray, slimeMonArray, fireMonArray, camera);
+		player2 = new Player(player2still, player2left, player2right, player2up , player2down, map ,sword2, treeMonArray, slimeMonArray, fireMonArray, camera);
 		player2.setPosition(35 * player2.getCollisionLayer().getTileWidth()+32, 26 * player2.getCollisionLayer().getTileHeight());
 //		
 //		sword3 = new Sword(swordFireleft, swordFireright, swordFireup, swordFiredown, swordLightningleft, swordLightningright, swordLightningup, swordLightningdown, swordWaterleft, swordWaterright, swordWaterup, swordWaterdown, treeMonArray, slimeMonArray, fireMonArray);
@@ -176,10 +201,25 @@ public class Play implements Screen {
 		Gdx.input.setInputProcessor(new GamepadInput(player1,player2,player3,player4));
 		
 		//Music
-//		music = Gdx.audio.newMusic(Gdx.files.internal("sound/darklights.mp3"));
-//		music.setVolume(0.4f);  
-//		music.setLooping(true);
-//		music.play();
+		music = Gdx.audio.newMusic(Gdx.files.internal("sound/darklights.mp3"));
+		music.setVolume(0.4f);  
+		music.setLooping(true);
+		music.play();
+		
+
+		// DOORS
+
+//		// initialize
+		doorTile = null;
+//
+		// get the open door tile
+		Iterator<TiledMapTile> tiles = map.getTileSets().getTileSet("sewer_1").iterator();
+		while(tiles.hasNext()) {
+			TiledMapTile tile = tiles.next();
+			if(tile.getProperties().containsKey("door") && tile.getProperties().get("door", String.class).equals("open")){
+				doorTile = tile;
+			}
+		}
 		
 	}
 	
@@ -246,17 +286,17 @@ public class Play implements Screen {
 	
 	private void spawnMonster(TiledMap map) {
 		int i = 0;
-//		for(MapObject object : map.getLayers().get("treeMonster").getObjects()){
-//			if(object instanceof RectangleMapObject) {
-//				RectangleMapObject rectObject = (RectangleMapObject) object;
-//				Rectangle spawn = rectObject.getRectangle();			
-//				//SPAWN MONSTERS
-//				treeMonArray.add(new TreeMonster(60, treeMonsterup, treeMonsterdown, camera));
-//				treeMonArray.get(i).setPosition(spawn.x, spawn.y);
-//				i++;
-//			}
-//		}
-//		i=0;
+		for(MapObject object : map.getLayers().get("treeMonster").getObjects()){
+			if(object instanceof RectangleMapObject) {
+				RectangleMapObject rectObject = (RectangleMapObject) object;
+				Rectangle spawn = rectObject.getRectangle();			
+				//SPAWN MONSTERS
+				treeMonArray.add(new TreeMonster(60, treeMonsterup, treeMonsterdown, camera, player1));
+				treeMonArray.get(i).setPosition(spawn.x, spawn.y);
+				i++;
+			}
+		}
+		i=0;
 		for(MapObject object : map.getLayers().get("slimeMonster").getObjects()){
 			if(object instanceof RectangleMapObject) {
 				RectangleMapObject rectObject = (RectangleMapObject) object;
@@ -267,17 +307,17 @@ public class Play implements Screen {
 				i++;
 			}
 		}
-//		i=0;
-//		for(MapObject object : map.getLayers().get("fireMonster").getObjects()){
-//			if(object instanceof RectangleMapObject) {
-//				RectangleMapObject rectObject = (RectangleMapObject) object;
-//				Rectangle spawn = rectObject.getRectangle();			
-//				//SPAWN MONSTERS
-//				fireMonArray.add(new FireMonster(40, fireMonsterup, fireMonsterdown, camera));
-//				fireMonArray.get(i).setPosition(spawn.x, spawn.y);
-//				i++;
-//			}
-//		}
+		i=0;
+		for(MapObject object : map.getLayers().get("fireMonster").getObjects()){
+			if(object instanceof RectangleMapObject) {
+				RectangleMapObject rectObject = (RectangleMapObject) object;
+				Rectangle spawn = rectObject.getRectangle();			
+				//SPAWN MONSTERS
+				fireMonArray.add(new FireMonster(40, fireMonsterup, fireMonsterdown, camera, player1));
+				fireMonArray.get(i).setPosition(spawn.x, spawn.y);
+				i++;
+			}
+		}
 	}
 	
 
@@ -379,6 +419,42 @@ public class Play implements Screen {
 
 		fireMonsterup.setPlayMode(Animation.LOOP);
 		fireMonsterdown.setPlayMode(Animation.LOOP);
+	}
+	
+	public void openDoorOne(){
+		TiledMapTileLayer layer = (TiledMapTileLayer) map.getLayers().get("background");
+
+		for(int x = 0; x < layer.getWidth(); x++)
+			for(int y = 0; y < layer.getHeight(); y++) {
+				Cell cell = layer.getCell(x, y);
+				if(cell != null && cell.getTile().getProperties().containsKey("door") && cell.getTile().getProperties().get("door", String.class).equals("locked"))
+					if(true)
+						cell.setTile(doorTile);
+		}
+	}
+	
+	public void openDoorTwo(){
+		TiledMapTileLayer layer = (TiledMapTileLayer) map.getLayers().get("background");
+
+		for(int x = 0; x < layer.getWidth(); x++)
+			for(int y = 0; y < layer.getHeight(); y++) {
+				Cell cell = layer.getCell(x, y);
+				if(cell != null && cell.getTile().getProperties().containsKey("door") && cell.getTile().getProperties().get("door", String.class).equals("locked2"))
+					if(true)
+						cell.setTile(doorTile);
+		}
+	}
+	
+	public void openDoorThree(){
+		TiledMapTileLayer layer = (TiledMapTileLayer) map.getLayers().get("background");
+
+		for(int x = 0; x < layer.getWidth(); x++)
+			for(int y = 0; y < layer.getHeight(); y++) {
+				Cell cell = layer.getCell(x, y);
+				if(cell != null && cell.getTile().getProperties().containsKey("door") && cell.getTile().getProperties().get("door", String.class).equals("locked3"))
+					if(true)
+						cell.setTile(doorTile);
+		}
 	}
 
 }

@@ -29,6 +29,7 @@ public class Player extends Sprite {
 	
 	private Animation left, right, up , down;
 	private TiledMapTileLayer collisionLayer;
+	private TiledMapTileLayer foregroundLayer;
 	
 	private float _x = getX(), _y = getY(), pwidth = getWidth(), pheight = getHeight();
 	
@@ -56,14 +57,16 @@ public class Player extends Sprite {
 
 	
 	public Player(Animation still, Animation left, Animation right,
-			Animation up, Animation down, TiledMapTileLayer collisionLayer , Sword sword, 
+			Animation up, Animation down, TiledMap map , Sword sword, 
 				ArrayList<TreeMonster> treeMonArray, ArrayList<SlimeMonster> slimeMonArray, ArrayList<FireMonster> fireMonArray, OrthographicCamera camera){
 		super(still.getKeyFrame(0));
 		this.left = left;
 		this.right = right;
 		this.up = up;
 		this.down = down;
-		this.collisionLayer = collisionLayer;
+		this.collisionLayer = (TiledMapTileLayer) map.getLayers().get("background");
+		//unwichtig
+		this.foregroundLayer = (TiledMapTileLayer) map.getLayers().get("backbackground");
 		this.sword = sword;
 		this.treeMonArray = treeMonArray;
 		this.slimeMonArray = slimeMonArray;
