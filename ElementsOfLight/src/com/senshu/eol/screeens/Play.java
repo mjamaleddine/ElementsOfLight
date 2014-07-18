@@ -202,7 +202,7 @@ public class Play implements Screen {
 		
 		//Music
 		music = Gdx.audio.newMusic(Gdx.files.internal("sound/darklights.mp3"));
-		music.setVolume(0.4f);  
+		music.setVolume(0.6f);  
 		music.setLooping(true);
 		music.play();
 		
